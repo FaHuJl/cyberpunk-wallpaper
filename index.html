@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyberpunk Night City Clock 24h (GitHub)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: "Share Tech Mono", monospace; }
+    body { position: relative; }
+    .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .hud { position: fixed; top: 3%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 1; color: #70ffff;
+           text-shadow: 0 0 4px rgba(0,255,255,0.6), 0 0 14px rgba(0,255,255,0.85), 0 0 25px rgba(0,210,255,0.6); }
+    .time-line { display: flex; justify-content: center; align-items: baseline; gap: 0.05vw; font-size: 3.8vw; letter-spacing: 0.10vw; }
+    .weekday { margin-top: 0.35vw; font-size: 2.2vw; letter-spacing: 0.3vw; }
+    .date { margin-top: 0.25vw; font-size: 1.9vw; letter-spacing: 0.28vw; }
+    .time-line::before, .time-line::after,
+    .weekday::before, .weekday::after,
+    .date::before, .date::after {
+      content: attr(data-text); position: absolute; left: 0; right: 0; margin: 0 auto; text-align: inherit;
+      color: #00ffff; opacity: 0.15; mix-blend-mode: screen; pointer-events: none; }
+    .time-line::before { transform: translate(-0.08vw,-0.08vw); color: #ff66ff; }
+    .time-line::after  { transform: translate( 0.08vw, 0.08vw); color: #00ffff; }
+    .weekday::before   { transform: translate(-0.05vw, 0);      color: #ff66ff; }
+    .weekday::after    { transform: translate( 0.05vw, 0);      color: #00ffff; }
+    .date::before      { transform: translate(-0.05vw, 0);      color: #ff66ff; }
+    .date::after       { transform: translate( 0.05vw, 0);      color: #00ffff; }
+    .scanlines { position: fixed; inset: 0; z-index: 2; pointer-events: none;
+                 background-image: linear-gradient(to bottom, rgba(0,0,0,0.35) 0px, rgba(0,0,0,0.0) 1px);
+                 background-size: 100% 2px; mix-blend-mode: soft-light; }
+  </style>
+</head>
+<body>
+  <!-- Важно: видео должно лежать рядом с index.html в репозитории -->
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="cyberpunk-night-city.1920x1080.mp4" type="video/mp4" />
+  </video>
+
+  <div class="hud">
+    <div class="time-line" id="time-line" data-text="00:00:00">
+      <span id="time-text">00:00:00</span>
+    </div>
+    <div class="weekday" id="weekday-text" data-text="ПОНЕДЕЛЬНИК">ПОНЕДЕЛЬНИК</div>
+    <div class="date" id="date-text" data-text="26 АВГУСТА 2026">26 АВГУСТА 2026</div>
+  </div>
+
+  <div class="scanlines"></div>
+
+  <script>
+    const weekdayNames = [
+      "ВОСКРЕСЕНЬЕ","ПОНЕДЕЛЬНИК","ВТОРНИК","СРЕДА","ЧЕТВЕРГ","ПЯТНИЦА","СУББОТА"
+    ];
+    const monthNamesRu = [
+      "ЯНВАРЯ","ФЕВРАЛЯ","МАРТА","АПРЕЛЯ","МАЯ","ИЮНЯ","ИЮЛЯ","АВГУСТА","СЕНТЯБРЯ","ОКТЯБРЯ","НОЯБРЯ","ДЕКАБРЯ"
+    ];
+    function updateClock(){
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const timeStr = `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+      const weekdayStr = weekdayNames[now.getDay()];
+      const dateStr = `${now.getDate()} ${monthNamesRu[now.getMonth()]} ${now.getFullYear()}`;
+      const timeLineEl = document.getElementById('time-line');
+      const timeEl = document.getElementById('time-text');
+      const weekdayEl = document.getElementById('weekday-text');
+      const dateEl = document.getElementById('date-text');
+      timeEl.textContent = timeStr;
+      weekdayEl.textContent = weekdayStr;
+      dateEl.textContent = dateStr;
+      timeLineEl.setAttribute('data-text', timeStr);
+      weekdayEl.setAttribute('data-text', weekdayStr);
+      dateEl.setAttribute('data-text', dateStr);
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
