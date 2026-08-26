@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyberpunk Now Playing</title>
+<style>
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#05070b;color:#fff;font-family:"Segoe UI",Arial,sans-serif}#bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}#shade{position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.45),transparent 50%,rgba(0,0,0,.25));z-index:1}#clock{position:fixed;z-index:2;top:44px;left:50%;transform:translateX(-50%);width:max-content;text-align:center;text-shadow:0 3px 18px #000;color:#f3f6ff}.time{font-size:74px;font-weight:700;letter-spacing:3px;line-height:1}.date{margin-top:11px;font-size:18px;font-weight:500;letter-spacing:3px;text-transform:uppercase}.player{position:fixed;z-index:2;right:56px;bottom:54px;width:505px;min-height:142px;padding:18px 21px;display:flex;gap:18px;align-items:center;border:1px solid rgba(135,226,255,.48);border-radius:18px;background:linear-gradient(135deg,rgba(7,19,36,.87),rgba(25,6,42,.76));box-shadow:0 0 30px rgba(0,214,255,.18),inset 0 0 24px rgba(0,215,255,.06);backdrop-filter:blur(10px)}.cover{width:104px;height:104px;flex:0 0 104px;overflow:hidden;border:1px solid rgba(109,233,255,.65);border-radius:12px;background:linear-gradient(145deg,#11273d,#401339);box-shadow:0 0 18px rgba(0,215,255,.25)}.cover img{display:block;width:100%;height:100%;object-fit:cover}.meta{min-width:0;flex:1}.label{color:#6de9ff;font-size:11px;font-weight:700;letter-spacing:2.5px}.title{margin-top:10px;font-size:25px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.artist{margin-top:5px;color:#c4d5e4;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status{margin-top:13px;color:#ff68d5;font-size:10px;font-weight:700;letter-spacing:2px}
+</style>
+</head>
+<body>
+<video id="bg" autoplay muted loop playsinline><source src="cyberpunk-night-city.1920x1080.mp4" type="video/mp4"></video><div id="shade"></div>
+<div id="clock"><div id="time" class="time">00:00:00</div><div id="date" class="date">Загрузка даты</div></div>
+<section class="player"><div class="cover"><img id="cover" alt="Обложка альбома"></div><div class="meta"><div class="label">NOW PLAYING · WINDOWS MEDIA</div><div id="track-title" class="title">Нет активного трека</div><div id="track-artist" class="artist">Ожидание данных Lively</div><div id="track-status" class="status">NO TRACK</div></div></section>
+<script>
+const timeEl=document.getElementById('time'),dateEl=document.getElementById('date'),titleEl=document.getElementById('track-title'),artistEl=document.getElementById('track-artist'),statusEl=document.getElementById('track-status'),coverEl=document.getElementById('cover');
+const placeholder=`data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b3145"/><stop offset="1" stop-color="#421238"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><path d="M85 70v106l86-27V44z" fill="none" stroke="#6de9ff" stroke-width="8"/><circle cx="73" cy="181" r="19" fill="#ff68d5"/><circle cx="159" cy="154" r="19" fill="#ff68d5"/></svg>')}`;coverEl.src=placeholder;
+function updateClock(){const n=new Date();timeEl.textContent=n.toLocaleTimeString('ru-RU',{hour12:false});dateEl.textContent=n.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase()}updateClock();setInterval(updateClock,1000);
+function thumbnailSrc(value){if(!value)return null;if(typeof value==='string')return value.replace(/^data:image\/[^;]+;base64,\s*/i,'');if(value instanceof Uint8Array){let s='';for(let i=0;i<value.length;i++)s+=String.fromCharCode(value[i]);return btoa(s)}return null}
+function setAlbumCover(thumbnail){const encoded=thumbnailSrc(thumbnail);if(!encoded){coverEl.src=placeholder;return}coverEl.onerror=()=>{coverEl.onerror=null;coverEl.src=placeholder};coverEl.src='data:image/png;base64,'+encoded}
+function livelyCurrentTrack(data){try{const obj=typeof data==='string'?JSON.parse(data):data;if(!obj){titleEl.textContent='Нет активного трека';artistEl.textContent='Запусти музыку и переключи трек';statusEl.textContent='NO TRACK';coverEl.src=placeholder;return}titleEl.textContent=obj.Title||'Без названия';artistEl.textContent=obj.Artist||'Неизвестный исполнитель';statusEl.textContent=obj.IsPlaying===false?'PAUSED':'NOW PLAYING';setAlbumCover(obj.Thumbnail)}catch(e){titleEl.textContent='Нет активного трека';artistEl.textContent='Запусти музыку';statusEl.textContent='NO TRACK';coverEl.src=placeholder}}
+</script>
+</body>
+</html>

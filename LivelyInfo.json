@@ -1,0 +1,17 @@
+{
+  "AppVersion": "2.2.1.0",
+  "Title": "Cyberpunk Now Playing Clean",
+  "Thumbnail": null,
+  "Preview": null,
+  "Desc": "Cyberpunk video wallpaper with Windows Now Playing widget.",
+  "Author": "FaHuJl",
+  "License": null,
+  "Contact": null,
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": "--system-nowplaying",
+  "IsAbsolutePath": false,
+  "Id": null,
+  "Tags": null,
+  "Version": 0
+}
